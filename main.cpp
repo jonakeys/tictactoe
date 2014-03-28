@@ -125,13 +125,14 @@ bool free(int freeTest, vector <char>& vBoard) {
     else { return false; }
 }
 
-
+// Make the cpu move
 int cpuMove(vector <char>& vBoard)
 {
     int location, testloc;
     bool done = false;
 
     while(!done) {
+	// Check if it can block the player (or win)
 	// Upper row
 	if((vBoard[0] == vBoard[1]) && free(2, vBoard)) {testloc = 2; done = true;}
 	else if((vBoard[1] == vBoard[2]) && free(0, vBoard)) {testloc = 0; done = true;}
@@ -166,12 +167,13 @@ int cpuMove(vector <char>& vBoard)
 	else if((vBoard[4] == vBoard[6]) && free(2, vBoard)) {testloc = 2; done = true;}
 	else if((vBoard[2] == vBoard[6]) && free(4, vBoard)) {testloc = 4; done = true;}
 
+	// Choose random position if cpu can't block or win
 	else {
 	    testloc = rand() % 9;
-	}
-
-	if(vBoard[testloc] != 'X' && vBoard[testloc] != 'O') {
-	    done = true;
+	    if(vBoard[testloc] != 'X' && vBoard[testloc] != 'O') {
+		done = true;
+	    }
+	    
 	}
     }
         
