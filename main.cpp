@@ -23,6 +23,7 @@ int cpuMove(vector <char>& vBoard);
 int getInput(int& nCount); // Get user input
 void changeArray(vector <char>& vBoard, int& nCount, int& nLoc); // Use the input to change contents of the array
 bool checkWin(vector <char>& vBoard); // Check if a player has three in a row
+bool free(int freeTest, vector <char>& vBoard);
 
 int main()
 {
@@ -106,12 +107,12 @@ int playerOrCpu()
     int choice;
 
     while(valid) {
-	cout << "Choose opponent (1) Human (2) CPU: ";
+	cout << "Kies een tegenstander (1) Persoon (2) CPU: ";
 	cin >> choice;
 	
 	if(choice == 1 || choice == 2) {valid = false;}
 	else {
-	    cout << "Invalid input. Choose (1) or (2).\n";
+	    cout << "Ongeldige keuze. Kies (1) of (2).\n";
 	    valid = false; 
 	}
     }
@@ -119,18 +120,62 @@ int playerOrCpu()
     return choice;
 }
 
+bool free(int freeTest, vector <char>& vBoard) { 
+    if((vBoard[freeTest] != 'X') && (vBoard[freeTest] != 'O')) { return true; }
+    else { return false; }
+}
+
+
 int cpuMove(vector <char>& vBoard)
 {
-    int location;
+    int location, testloc;
     bool done = false;
 
     while(!done) {
-	location = rand() % 9;
-	if(vBoard.at(location) != 'X' && vBoard.at(location) != 'O') {
+	// Upper row
+	if((vBoard[0] == vBoard[1]) && free(2, vBoard)) {testloc = 2; done = true;}
+	else if((vBoard[1] == vBoard[2]) && free(0, vBoard)) {testloc = 0; done = true;}
+	else if((vBoard[0] == vBoard[2]) && free(1, vBoard)) {testloc = 1; done = true;}
+	// Middle row
+	else if((vBoard[3] == vBoard[4]) && free(5, vBoard)) {testloc = 5; done = true;}
+	else if((vBoard[4] == vBoard[5]) && free(3, vBoard)) {testloc = 3; done = true;}
+	else if((vBoard[3] == vBoard[5]) && free(4, vBoard)) {testloc = 4; done = true;}
+	// Lower row
+	else if((vBoard[6] == vBoard[7]) && free(8, vBoard)) {testloc = 8; done = true;}
+	else if((vBoard[7] == vBoard[8]) && free(6, vBoard)) {testloc = 6; done = true;}
+	else if((vBoard[6] == vBoard[8]) && free(7, vBoard)) {testloc = 7; done = true;}
+
+	// Left column
+	else if((vBoard[0] == vBoard[3]) && free(6, vBoard)) {testloc = 6; done = true;}
+	else if((vBoard[3] == vBoard[6]) && free(0, vBoard)) {testloc = 0; done = true;}
+	else if((vBoard[0] == vBoard[6]) && free(3, vBoard)) {testloc = 3; done = true;}
+	// Middle column
+	else if((vBoard[1] == vBoard[4]) && free(7, vBoard)) {testloc = 7; done = true;}
+	else if((vBoard[4] == vBoard[7]) && free(1, vBoard)) {testloc = 1; done = true;}
+	else if((vBoard[1] == vBoard[7]) && free(4, vBoard)) {testloc = 4; done = true;}
+	// Right column
+	else if((vBoard[2] == vBoard[5]) && free(8, vBoard)) {testloc = 8; done = true;}
+	else if((vBoard[5] == vBoard[8]) && free(2, vBoard)) {testloc = 2; done = true;}
+	else if((vBoard[2] == vBoard[8]) && free(5, vBoard)) {testloc = 5; done = true;}
+
+	// Diagonals
+	else if((vBoard[0] == vBoard[4]) && free(8, vBoard)) {testloc = 8; done = true;}
+	else if((vBoard[4] == vBoard[8]) && free(0, vBoard)) {testloc = 0; done = true;}
+	else if((vBoard[0] == vBoard[8]) && free(4, vBoard)) {testloc = 4; done = true;}
+	else if((vBoard[2] == vBoard[4]) && free(6, vBoard)) {testloc = 6; done = true;}
+	else if((vBoard[4] == vBoard[6]) && free(2, vBoard)) {testloc = 2; done = true;}
+	else if((vBoard[2] == vBoard[6]) && free(4, vBoard)) {testloc = 4; done = true;}
+
+	else {
+	    testloc = rand() % 9;
+	}
+
+	if(vBoard[testloc] != 'X' && vBoard[testloc] != 'O') {
 	    done = true;
-	    ++location;
 	}
     }
+        
+    location = testloc + 1;
     
     cout << "Computer heeft gespeeld op locatie: " << location << endl;
 
