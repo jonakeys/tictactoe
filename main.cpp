@@ -9,6 +9,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <stdlib.h>
+#include <ctime>
 using namespace std;
 
 #define cP1 'X';
@@ -16,6 +18,8 @@ using namespace std;
 
 void displayTitle(); // Display game title
 void displayBoard(vector <char>& vBoard); // Print the board to the screen
+int playerOrCpu();
+int cpuMove(vector <char>& vBoard);
 int getInput(int& nCount); // Get user input
 void changeArray(vector <char>& vBoard, int& nCount, int& nLoc); // Use the input to change contents of the array
 bool checkWin(vector <char>& vBoard); // Check if a player has three in a row
@@ -23,43 +27,56 @@ bool checkWin(vector <char>& vBoard); // Check if a player has three in a row
 int main()
 {
     int nTurn(0); // Counting the turns
+    int nHumOrCpu, nTest; // int nTest is for testing the location
     bool GO = true;
-    int aBoard[] = {'1','2','3','4','5','6','7','8','9'}; // Initializing the gameboard
+    int aBoard[] = {'1','2','3','4','5','6','7','8','9'}; // Initializing the gameboard    
     vector <char> vPlayBoard(aBoard,aBoard+sizeof(aBoard)/sizeof(aBoard[0])); // Put the gameboard into a vector
+    srand ( time(NULL) );
     
     displayTitle();
     displayBoard(vPlayBoard);
+    nHumOrCpu = playerOrCpu();
 
     while(GO && nTurn < 9) {
-	int nTest = getInput(nTurn);
-	// Check if chosen position is already taken
-	if(vPlayBoard.at(nTest-1)=='X' || vPlayBoard.at(nTest-1)=='O') {
-	    cout << "Locatie " << nTest << " is al bezet." << endl;
+	if(nTurn % 2 == 0 || (nTurn % 2 != 0 && nHumOrCpu==1)){
+	    nTest = getInput(nTurn);
+	    // Check if chosen position is already taken
+	    if(vPlayBoard.at(nTest-1)=='X' || vPlayBoard.at(nTest-1)=='O') {
+		cout << "Locatie " << nTest << " is al bezet." << endl;
+	    }
+	}
+	else if(nTurn % 2 != 0 && nHumOrCpu==2){
+	    nTest = cpuMove(vPlayBoard);
+	}
+	
+	changeArray(vPlayBoard, nTurn, nTest);
+	if(!checkWin(vPlayBoard)) {
+	    ++nTurn;
 	}
 	else {
-	    changeArray(vPlayBoard ,nTurn, nTest);
-	    if(!checkWin(vPlayBoard)) {
-		++nTurn;
-	    }
-	    else {
-		GO = false;
-	    }
+	    GO = false;
 	}
 	displayTitle();
 	displayBoard(vPlayBoard);
     }
-    
+
     if(nTurn<9) {
 	int speler;
-	if (nTurn % 2 == 0) speler = 1;
-	else speler = 2;
-	cout << "De winnaar is speler " << speler << "!\n";
+	
+	if((nTurn % 2 == 0) || (nTurn % 2 != 0) && (nHumOrCpu == 1)) {
+	    if(nTurn % 2 == 0) speler = 1;
+	    else if((nTurn % 2 != 0) && (nHumOrCpu == 1)) speler = 2;
+	    cout << "De winnaar is speler " << speler << "!\n";
+	}
+	else
+	    cout << "De computer heeft gewonnen!\n";
     }
-    // When 9 turns are gone without a winner, print this:
+    
+    // When 9 turns are passed without a winner, print this:
     else {
 	cout << "Helaas, er is geen winnaar." << endl;
     }
-
+    
     cout << "Bedankt voor het spelen! Tot ziens!" << endl;
 
     return 0;
@@ -81,6 +98,43 @@ void displayBoard(vector <char>& vBoard)
 	 << "\t " << vBoard.at(3) << " | " << vBoard.at(4) << " | " << vBoard.at(5) << endl
 	 << "\t" << "-----------" << endl
 	 << "\t " << vBoard.at(6) << " | " << vBoard.at(7) << " | " << vBoard.at(8) << endl << endl;
+}
+
+int playerOrCpu()
+{
+    bool valid=true;
+    int choice;
+
+    while(valid) {
+	cout << "Choose opponent (1) Human (2) CPU: ";
+	cin >> choice;
+	
+	if(choice == 1 || choice == 2) {valid = false;}
+	else {
+	    cout << "Invalid input. Choose (1) or (2).\n";
+	    valid = false; 
+	}
+    }
+    
+    return choice;
+}
+
+int cpuMove(vector <char>& vBoard)
+{
+    int location;
+    bool done = false;
+
+    while(!done) {
+	location = rand() % 9;
+	if(vBoard.at(location) != 'X' && vBoard.at(location) != 'O') {
+	    done = true;
+	    ++location;
+	}
+    }
+    
+    cout << "Computer heeft gespeeld op locatie: " << location << endl;
+
+    return location;
 }
 
 // Get input from the user and check if it is within valid range (1-9)
