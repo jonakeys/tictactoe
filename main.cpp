@@ -16,7 +16,7 @@ using namespace std;
 #define cP1 'X';
 #define cP2 'O';
 
-void displayTitle(); // Display game title
+void displayTitle(int nWho); // Display game title
 void displayBoard(vector <char>& vBoard); // Print the board to the screen
 int playerOrCpu();
 int cpuMove(vector <char>& vBoard);
@@ -28,13 +28,13 @@ bool free(int freeTest, vector <char>& vBoard);
 int main()
 {
     int nTurn(0); // Counting the turns
-    int nHumOrCpu, nTest; // int nTest is for testing the location
+    int nHumOrCpu=0, nTest; // int nTest is for testing the location
     bool GO = true;
     int aBoard[] = {'1','2','3','4','5','6','7','8','9'}; // Initializing the gameboard    
     vector <char> vPlayBoard(aBoard,aBoard+sizeof(aBoard)/sizeof(aBoard[0])); // Put the gameboard into a vector
     srand ( time(NULL) );
     
-    displayTitle();
+    displayTitle(nHumOrCpu);
     displayBoard(vPlayBoard);
     nHumOrCpu = playerOrCpu();
 
@@ -57,7 +57,7 @@ int main()
 	else {
 	    GO = false;
 	}
-	displayTitle();
+	displayTitle(nHumOrCpu);
 	displayBoard(vPlayBoard);
     }
 
@@ -84,11 +84,17 @@ int main()
 }
 
 // Print the name of the game
-void displayTitle()
+void displayTitle(int nWho)
 {
     cout << "------------------------------" << endl
 	 << "\tTIC TAC TOE" << endl << endl
-	 << "Speler 1 = X\tSpeler 2 = O" << endl << endl;
+	 << "Speler 1 = X\t";
+    if(nWho == 0)
+	cout << endl << endl;
+    else if(nWho == 1)
+	cout << "Speler 2 = O" << endl << endl;
+    else if(nWho == 2)
+	cout << "CPU = O" << endl << endl;
 }
 
 // Print the contents of the vector (playing board) to the screen
