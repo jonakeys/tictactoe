@@ -3,7 +3,9 @@
 
   Created by Jonathan van der Steege (27.03.2014)
 
-  A simple game of 'Tic Tac Toe' to be played by two human players
+  A simple game of 'Tic Tac Toe'
+  PLayable with two human players or one player against the cpu
+
  */
 
 #include <iostream>
@@ -40,6 +42,7 @@ int main()
     nHumOrCpu = playerOrCpu();
 
     while(GO && nTurn < 9) {
+	// Player 1 and if playing against human: player 2
 	if(nTurn % 2 == 0 || (nTurn % 2 != 0 && nHumOrCpu==1)){
 	    nTest = getInput(nTurn);
 	    // Check if chosen position is already taken
@@ -47,10 +50,11 @@ int main()
 		cout << "Locatie " << nTest << " is al bezet." << endl;
 	    }
 	}
+	// If playing against cpu
 	else if(nTurn % 2 != 0 && nHumOrCpu==2){
 	    nTest = cpuMove(vPlayBoard);
 	}
-	
+	// Put the move in the playing board
 	changeArray(vPlayBoard, nTurn, nTest);
 	if(!checkWin(vPlayBoard)) {
 	    ++nTurn;
@@ -58,23 +62,25 @@ int main()
 	else {
 	    GO = false;
 	}
+	// Print the board to the screen
 	displayTitle(nHumOrCpu);
 	displayBoard(vPlayBoard);
     }
 
     if(nTurn<9) {
 	int speler;
-	
+	// Check if player 1 or 2 has won
 	if((nTurn % 2 == 0) || (nTurn % 2 != 0) && (nHumOrCpu == 1)) {
 	    if(nTurn % 2 == 0) speler = 1;
 	    else if((nTurn % 2 != 0) && (nHumOrCpu == 1)) speler = 2;
 	    cout << "De winnaar is speler " << speler << "!\n";
 	}
+	// When the cpu has won
 	else
 	    cout << "De computer heeft gewonnen!\n";
     }
     
-    // When 9 turns are passed without a winner, print this:
+    // When 9 turns are passed without a winner
     else {
 	cout << "Helaas, er is geen winnaar." << endl;
     }
@@ -108,6 +114,8 @@ void displayBoard(vector <char>& vBoard)
 	 << "\t " << vBoard.at(6) << " | " << vBoard.at(7) << " | " << vBoard.at(8) << endl << endl;
 }
 
+// Gives choice for playing against human or cpu
+// @param return Returns 1 for player, 2 for cpu
 int playerOrCpu()
 {
     bool valid=true;
@@ -127,11 +135,14 @@ int playerOrCpu()
     return choice;
 }
 
+// Check if position is free
 bool free(int freeTest, vector <char>& vBoard) { 
     if((vBoard[freeTest] != 'X') && (vBoard[freeTest] != 'O')) { return true; }
     else { return false; }
 }
 
+// Test if cpu can make a winning move or block
+// @param result Return 0-8 if location is found and -1 if it's not possible
 int cpuTestXorO(vector <char>& vBoard, char sign)
 {
     int testloc=-1;
@@ -180,6 +191,7 @@ int cpuMove(vector <char>& vBoard)
     int location, testloc;
     bool done = false;
 
+    // Test if it can win or block
     testloc = cpuTestXorO(vBoard, 'O');
     if (testloc < 0) {
 	testloc = cpuTestXorO(vBoard, 'X');
@@ -202,6 +214,8 @@ int cpuMove(vector <char>& vBoard)
 }
 
 // Get input from the user and check if it is within valid range (1-9)
+// @param nCount Inserts the number of the turn
+// @param return Returns the chosen position by the player
 int getInput(int& nCount)
 {
     bool check=false;
@@ -245,6 +259,7 @@ void changeArray(vector <char>& vBoard, int& nCount, int& nLoc)
 }
 
 // Check winning conditions
+// @param return Returns true if someone has won
 bool checkWin(vector <char>& vBoard)
 {
     bool win = false;
